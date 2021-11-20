@@ -91,7 +91,7 @@ else
 
 		"
 	echo "............................. Availables ubuntu updates .................................."
-	sudo apt list-upgradable
+	sudo apt list --upgradable
 	echo "....................................................................................
 
 
