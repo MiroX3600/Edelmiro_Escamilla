@@ -1,87 +1,100 @@
 #! /bin/bash
 
-#sudo yum update
+hostnamectl
 
-#Ejemplo: Instalar y desinstalar programa{
-#if (yum list -q installed tcpdump);
-#then
-#	sudo yum remove tcpdump
-#	sudo yum install tcpdump -y
-#	echo "Se ha removido tcpdump"
-#else
-#	sudo yum install tcpdump -y
-#fi
-#}
-
-echo "....................SO version ........................................
-								"
-cat /etc/*release
-echo "
-	......................................................................"
-
-##epel-release
-#Ver: 		sudo yum list -q installed epel-release
-#Instalar:	sudo yum -y install epel-release
-#Limpiar:	sudo yum clean all
-#Remover:	sudo yum remove epel-release
-
-##clamav
-#Ver:		sudo yum list -q installed clamav
-#Instalar:	sudo yum -y install clamav-server clamav-data clamav-update clamav-filesystem clamav clamav-scanner-systemd clamav-devel clamav-lib clamav-server-systemd
-#Remover:	sudo yum remove clamav
-
-#Instalar programa requerido para clamav.
-if (yum list -q installed epel-release)
+if (hostnamectl | grep "centos")
 then
-	echo "
-	!!!!!!!!!!!!!!!	
-	Epel-release requeriment installed.
-	!!!!!!!!!!!!!!!"
-	#sudo yum clean all
+	echo ".....................Sistema CentOS detectado...........................
+	
+	"
+	if (yum list -q installed epel-release)
+	then
+		echo "
+		!!!!!!!!!!!!!!!	
+		Epel-release requeriment installed.
+		!!!!!!!!!!!!!!!"
+		#sudo yum clean all
+	else
+		sudo yum -y install epel-release
+		sudo yum clean all
+		echo "the required program for clamav was installed"
+		echo "installed Verification:
+
+
+		"
+		sudo yum list -q installed epel-release
+	fi
+
+	#Instalar y desinstalar programa clamav.
+	if (yum list -q installed clamav)
+	then
+		sudo yum remove clamav
+		sudo yum -y install clamav-server clamav-data clamav-update clamav-filesystem clamav clamav-scanner-systemd clamav-devel clamav-lib clamav-server-systemd
+		echo "clamav for CentOS 7 was reinstalled"
+		echo "...................................................................
+		installed program verification:
+
+		"
+		sudo yum list -q installed clamav
+		echo "...................................................................."
+	else
+		sudo yum -y install clamav-server clamav-data clamav-update clamav-filesystem clamav clamav-scanner-systemd clamav-devel clamav-lib clamav-server-systemd
+		echo "Clamav for CentOS 7 was installed"
+		echo "...................................................................
+		installed program verification:
+
+		"
+		sudo yum list -q installed clamav
+		echo "........................................................................"
+	fi
+
 else
-	sudo yum -y install epel-release
-	sudo yum clean all
-	echo "the required program for clamav was installed"
-	echo "install Verification:
+	echo "....................................Sistema ubuntu detectado..............................................."
+	if (apt list installed clamav)
+	then
+		echo "Reinstall programa clamav"
+		sudo apt-get autoremove clamav
+		sudo apt-get install clamav
+		echo "............................
 
+		"
+		whereis clamav
+	
+	else
+		echo "Install program clamav"
+		sudo apt-get install clamav
+		echo "............................
 
-	"
-	sudo yum list -q installed epel-release
-fi
-
-#Instalar y desinstalar programa clamav.
-if (yum list -q installed clamav)
-then
-	sudo yum remove clamav
-	sudo yum -y install clamav-server clamav-data clamav-update clamav-filesystem clamav clamav-scanner-systemd clamav-devel clamav-lib clamav-server-systemd
-	echo "clamav for CentOS 7 was reinstalled"
-	echo "...................................................................
-	installed program verification:
-
-	"
-	sudo yum list -q installed clamav
-	echo "...................................................................."
-else
-	sudo yum -y install clamav-server clamav-data clamav-update clamav-filesystem clamav clamav-scanner-systemd clamav-devel clamav-lib clamav-server-systemd
-	echo "Clamav for CentOS 7 was installed"
-	echo "...................................................................
-	installed program verification:
-
-	"
-	sudo yum list -q installed clamav
-	echo "........................................................................"
+		"
+		whereis clamav
+	fi
+	
 fi
 
 #Check software available to update
-echo "
+if (hostnamectl | grep "centos")
+then
+	echo "
 	
 
-	"
-echo "............................. Availables updates .................................."
-sudo yum check-update
-echo "....................................................................................
+		"
+	echo "............................. Availables centos updates .................................."
+	sudo yum check-update
+	echo "....................................................................................
 
 
-	............................Updating... ..........................................."
-sudo yum update
+		............................Updating... ..........................................."
+	sudo yum update
+else
+	echo "
+	
 
+		"
+	echo "............................. Availables ubuntu updates .................................."
+	sudo apt list-upgradable
+	echo "....................................................................................
+
+
+		............................Updating... ..........................................."
+	sudo apt-get update
+fi
